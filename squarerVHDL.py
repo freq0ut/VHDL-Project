@@ -2,14 +2,8 @@
 import numpy as np
 from datetime import datetime
 
-# Have user enter number of bits to square... remember 2's comp
-# The output will require twice the number of bits
-# The number of combinations are 2^n
-
-# Example... find all the square for 4 bits signed 2's comp
-
 nBits = int(input("Enter number of bits: "))
-estTime = -3E-06*np.power(float(nBits),6) + 0.0008*np.power(float(nBits),5) - 0.0182*np.power(float(nBits),4) + 0.1645*np.power(float(nBits),3) - 0.6529*np.power(float(nBits),2) + 1.1072*float(nBits) - 0.6132
+estTime = 6E-10*np.power(nBits,9.5981)
 
 startTime = datetime.now()
 # Find maximum value
@@ -54,19 +48,18 @@ for j in iteration(int(maxPos+1), int(maxPos + maxNeg), 1):
 	print("x(n): " + binIn + "   " + "x(n)^2: " + binOut)
 	# print(str(lineNum) + ") " + "In: " + binIn + "   " + "Out: " + binOut)
 
-print ("Execution time: " + str(datetime.now() - startTime))
+print("Execution time: " + str(datetime.now() - startTime))
 print("Estimated Time: " + str(estTime))
 
 
-# What does the VHDL code look like?
-
+# sample VHDL:
 
 # library ieee;
 # use ieee.std_logic_1164.all;
 
 # -------------------------------------------------
 
-# entity Mux is
+# entity "name" is
 # port(	
 #	I3: 	in std_logic_vector(2 downto 0);
 # 	I2: 	in std_logic_vector(2 downto 0);
@@ -75,11 +68,11 @@ print("Estimated Time: " + str(estTime))
 # 	S:		in std_logic_vector(1 downto 0);
 # 	O:		out std_logic_vector(2 downto 0)
 # );
-# end Mux;  
+# end "name";  
 
 # -------------------------------------------------
 
-# architecture behv1 of Mux is
+# architecture behv1 of "name" is
 # begin
 #     process(I3,I2,I1,I0,S)
 #     begin
@@ -96,7 +89,7 @@ print("Estimated Time: " + str(estTime))
 #     end process;
 # end behv1;
 
-# architecture behv2 of Mux is
+# architecture behv2 of "name" is
 # begin
 
 #     -- use when.. else statement
