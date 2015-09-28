@@ -31,73 +31,45 @@ def twos_comp(val, bits):
         val = val - (1 << bits)        # compute negative value
     return val                         # return positive value as is
 
-for i in iteration(0, maxPos, 1):
-	lineNum = i
-	squared = np.square(i)
-	binIn = formatBinary(bin(i), nBits)
-	binOut = formatBinary(bin(squared), nBits*2)
-	print("x(n): " + binIn + "   " + "x(n)^2: " + binOut)
-	# print(str(lineNum) + ") " + "In: " + binIn + "   " + "Out: " + binOut)
+with open("Output.vhd", "w") as vhdFile:
+	print("library ieee;", file=vhdFile)
+	print("use ieee.std_logic_1164.all;\n\n", file=vhdFile)
+	print("ENTITY TwosCompSquarer IS", file=vhdFile)
+	print("port(", file=vhdFile)
+	print("inputVal:	in std_logic_vector(" + str(nBits-1) + " downto 0);", file=vhdFile)
+	print("outputVal:	out std_logic_vector(" + str(2*nBits-1) + " downto 0)", file=vhdFile)
+	print(");", file=vhdFile)
+	print("END TwosCompSquarer\n\n", file=vhdFile)
 
-for j in iteration(int(maxPos+1), int(maxPos + maxNeg), 1):
-	lineNum = j
-	twosComp = twos_comp(lineNum, nBits)
-	squaredNeg = np.square(twosComp)
-	binIn = formatBinary(bin(j), nBits)
-	binOut = formatBinary(bin(squaredNeg), nBits*2)
-	print("x(n): " + binIn + "   " + "x(n)^2: " + binOut)
-	# print(str(lineNum) + ") " + "In: " + binIn + "   " + "Out: " + binOut)
+	print("ARCHITECTURE behv1 OF TwosCompSquarer IS", file=vhdFile)
+	print("BEGIN", file=vhdFile)
+	print("	WITH inputVal SELECT", file=vhdFile)
+
+	for i in iteration(0, maxPos, 1):
+		lineNum = i
+		squared = np.square(i)
+		binIn = formatBinary(bin(i), nBits)
+		binOut = formatBinary(bin(squared), nBits*2)
+		if(i == 0):
+			print("		outputVal <=	" + "\"" + binIn + "\"" + " WHEN " + "\"" + binOut + "\"" + ",", file=vhdFile)
+		else:
+			print("						" + "\"" + binIn + "\"" + " WHEN " + "\"" + binOut + "\"" + ",", file=vhdFile)
+
+	for j in iteration(int(maxPos+1), int(maxPos + maxNeg), 1):
+		lineNum = j
+		twosComp = twos_comp(lineNum, nBits)
+		squaredNeg = np.square(twosComp)
+
+		binIn = formatBinary(bin(j), nBits)
+		binOut = formatBinary(bin(squaredNeg), nBits*2)
+
+		if(j < int(maxPos + maxNeg)):
+			print("						" + "\"" + binIn + "\"" + " WHEN " + "\"" + binOut + "\"" + ",", file=vhdFile)
+		else:
+			print("						" + "\"" + binIn + "\"" + " WHEN " + "\"" + binOut + "\"" + ";", file=vhdFile)
+
+	print("END behv1;\n\n\n", file=vhdFile)
+vhdFile.close()
 
 print("Execution time: " + str(datetime.now() - startTime))
 print("Estimated Time: " + str(estTime))
-
-
-# sample VHDL:
-
-# library ieee;
-# use ieee.std_logic_1164.all;
-
-# -------------------------------------------------
-
-# entity "name" is
-# port(	
-#	I3: 	in std_logic_vector(2 downto 0);
-# 	I2: 	in std_logic_vector(2 downto 0);
-# 	I1: 	in std_logic_vector(2 downto 0);
-# 	I0: 	in std_logic_vector(2 downto 0);
-# 	S:		in std_logic_vector(1 downto 0);
-# 	O:		out std_logic_vector(2 downto 0)
-# );
-# end "name";  
-
-# -------------------------------------------------
-
-# architecture behv1 of "name" is
-# begin
-#     process(I3,I2,I1,I0,S)
-#     begin
-    
-#         -- use case statement
-#         case S is
-# 	    when "00" =>	O <= I0;
-# 	    when "01" =>	O <= I1;
-# 	    when "10" =>	O <= I2;
-# 	    when "11" =>	O <= I3;
-# 	    when others =>	O <= "ZZZ";
-# 	end case;
-
-#     end process;
-# end behv1;
-
-# architecture behv2 of "name" is
-# begin
-
-#     -- use when.. else statement
-#     O <=	I0 when S="00" else
-# 		I1 when S="01" else
-# 		I2 when S="10" else
-# 		I3 when S="11" else
-# 		"ZZZ";
-
-# end behv2;
-# --------------------------------------------------
